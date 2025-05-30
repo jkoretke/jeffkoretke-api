@@ -34,9 +34,11 @@ app.use((req, res, next) => {
 
 // Import routes
 const contactRoutes = require('./src/routes/contactRoutes');
+const docsRoutes = require('./src/routes/docsRoutes');
 
 // Use routes
 app.use('/api/contact', contactRoutes);
+app.use('/api/docs', docsRoutes);
 
 // Health check endpoint (like a simple ping in Android)
 app.get('/api/health', (req, res) => {
@@ -54,12 +56,16 @@ app.get('/api/info', (req, res) => {
         version: '1.0.0',
         description: 'REST API for jeffkoretke.com',
         author: 'Jeff Koretke',
+        documentation: '/api/docs',
         endpoints: [
             'GET /api/health',
             'GET /api/info',
+            'GET /api/docs',
             'POST /api/contact',
             'GET /api/contact',
-            'GET /api/contact/:id'
+            'GET /api/contact/:id',
+            'GET /api/projects',
+            'GET /api/about'
         ]
     });
 });
