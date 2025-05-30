@@ -1,0 +1,54 @@
+// Simple test file to verify the contact endpoint works
+// You can use this with VS Code's REST Client extension or copy to Postman
+
+### Test Contact Form Submission - Valid Data
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeff@example.com",
+  "subject": "Testing the contact form",
+  "message": "This is a test message to verify the contact form endpoint is working correctly."
+}
+
+### Test Contact Form Submission - Invalid Data (missing name)
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "email": "jeff@example.com",
+  "subject": "Testing the contact form",
+  "message": "This should fail validation because name is missing."
+}
+
+### Test Contact Form Submission - Invalid Email
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "invalid-email",
+  "subject": "Testing the contact form",
+  "message": "This should fail validation because email is invalid."
+}
+
+### Test Contact Form Submission - Message too short
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeff@example.com",
+  "subject": "Testing the contact form",
+  "message": "Too short"
+}
+
+### Get All Contact Submissions
+GET http://localhost:3000/api/contact
+
+### Get API Info
+GET http://localhost:3000/api/info
+
+### Get Health Check
+GET http://localhost:3000/api/health

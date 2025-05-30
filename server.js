@@ -32,6 +32,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// Import routes
+const contactRoutes = require('./src/routes/contactRoutes');
+
+// Use routes
+app.use('/api/contact', contactRoutes);
+
 // Health check endpoint (like a simple ping in Android)
 app.get('/api/health', (req, res) => {
     res.json({
@@ -50,7 +56,10 @@ app.get('/api/info', (req, res) => {
         author: 'Jeff Koretke',
         endpoints: [
             'GET /api/health',
-            'GET /api/info'
+            'GET /api/info',
+            'POST /api/contact',
+            'GET /api/contact',
+            'GET /api/contact/:id'
         ]
     });
 });
