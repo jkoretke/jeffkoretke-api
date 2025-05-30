@@ -268,9 +268,64 @@ router.get('/', (req, res) => {
                             success: false,
                             message: "Internal server error while checking day"
                         }
+                    }                },
+                testUrl: `${baseUrl}/api/isitnotfriday`
+            },
+            
+            about: {
+                method: "GET",
+                path: "/api/about",
+                description: "Get comprehensive about me information for website",
+                headers: {},
+                body: null,
+                responses: {
+                    200: {
+                        description: "About me information",
+                        example: {
+                            success: true,
+                            data: {
+                                name: "Jeff Koretke",
+                                title: "Android Developer",
+                                bio: "Experienced Android developer with expertise in Kotlin, MVVM architecture, and modern Android development practices.",
+                                location: "United States",
+                                email: "jeff@jeffkoretke.com",
+                                skills: {
+                                    languages: ["Kotlin", "Java", "JavaScript", "Python", "TypeScript"],
+                                    mobile: ["Android SDK", "Jetpack Compose", "MVVM Architecture", "Room Database"],
+                                    backend: ["Node.js", "Express.js", "REST APIs", "MongoDB"],
+                                    tools: ["Git", "Android Studio", "VS Code", "Figma"]
+                                },
+                                experience: [
+                                    {
+                                        company: "Your Current Company",
+                                        position: "Senior Android Developer",
+                                        duration: "2022 - Present",
+                                        description: "Lead Android application development using Kotlin and Jetpack Compose."
+                                    }
+                                ],
+                                socialLinks: {
+                                    github: "https://github.com/jkoretke",
+                                    linkedin: "https://linkedin.com/in/jeffkoretke",
+                                    portfolio: "https://jeffkoretke.com"
+                                },
+                                availability: {
+                                    status: "Available for new opportunities",
+                                    remoteWork: true
+                                }
+                            },
+                            lastUpdated: "2025-05-30T00:30:00.000Z",
+                            message: "About information retrieved successfully"
+                        }
+                    },
+                    500: {
+                        description: "Internal server error",
+                        example: {
+                            success: false,
+                            message: "Internal server error while fetching about information"
+                        }
                     }
                 },
-                testUrl: `${baseUrl}/api/isitnotfriday`
+                testUrl: `${baseUrl}/api/about`
             }
         },
         

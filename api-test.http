@@ -1,0 +1,20 @@
+// Simple test file to verify the about endpoint works
+// You can use this with VS Code's REST Client extension or copy to Postman
+
+### Test About Endpoint - Get about me information
+GET http://localhost:3000/api/about
+
+### Test All Key Endpoints
+GET http://localhost:3000/api/health
+
+###
+GET http://localhost:3000/api/info
+
+###
+GET http://localhost:3000/api/isitnotfriday
+
+###
+GET http://localhost:3000/api/about
+
+###
+GET http://localhost:3000/api/docs

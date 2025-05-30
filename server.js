@@ -36,11 +36,13 @@ app.use((req, res, next) => {
 const contactRoutes = require('./src/routes/contactRoutes');
 const docsRoutes = require('./src/routes/docsRoutes');
 const utilityRoutes = require('./src/routes/utilityRoutes');
+const aboutRoutes = require('./src/routes/aboutRoutes');
 
 // Use routes
 app.use('/api/contact', contactRoutes);
 app.use('/api/docs', docsRoutes);
 app.use('/api/isitnotfriday', utilityRoutes);
+app.use('/api/about', aboutRoutes);
 
 // Health check endpoint (like a simple ping in Android)
 app.get('/api/health', (req, res) => {

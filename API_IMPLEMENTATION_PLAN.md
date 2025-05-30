@@ -77,9 +77,9 @@ Start with these simple endpoints (think of them like Android Intent filters):
 - [x] `GET /api/info` - API version and basic info
 
 #### Contact/Portfolio Endpoints
-- [x] `POST /api/contact` - Handle contact form submissions
-- [x] `GET /api/isitnotfriday` - Return "Yes" if its not Friday, "No" if it is Friday
-- [ ] `GET /api/about` - Return about me information
+- [x] `POST /api/contact` - Handle contact form submissions ✅ **COMPLETED**
+- [x] `GET /api/isitnotfriday` - Return "Yes" if its not Friday, "No" if it is Friday ✅ **COMPLETED**
+- [x] `GET /api/about` - Return about me information ✅ **COMPLETED**
 
 ### 2.2 Request Validation
 - [ ] Install and configure express-validator
@@ -104,7 +104,15 @@ Start with these simple endpoints (think of them like Android Intent filters):
 - [ ] Store contact submissions temporarily in memory
 - [ ] Add email notifications for new contacts
 
-### 3.3 Optional: Database Integration
+### 3.3 Email Setup (Optional but Recommended)
+- [ ] Set up custom email address: jeff@jeffkoretke.com
+  - **Options**: Google Workspace ($6/month), Zoho Mail (free), or domain provider email
+  - **Benefits**: Professional appearance, matches your domain
+  - **Integration**: Use for contact form notifications and API about endpoint
+- [ ] Update aboutController.js email field once custom email is active
+- [ ] Configure email notifications to send to your custom email address
+
+### 3.4 Optional: Database Integration
 For future expansion (similar to Android's Room database):
 - [ ] Choose database (MongoDB with Mongoose OR PostgreSQL with Sequelize)
 - [ ] Set up database connection
