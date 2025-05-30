@@ -73,12 +73,12 @@ jeffkoretke-api/
 Start with these simple endpoints (think of them like Android Intent filters):
 
 #### Health & Info Endpoints
-- [ ] `GET /api/health` - Server health check
-- [ ] `GET /api/info` - API version and basic info
+- [x] `GET /api/health` - Server health check ✅ **COMPLETED** - Working at localhost:3000/api/health
+- [x] `GET /api/info` - API version and basic info
 
 #### Contact/Portfolio Endpoints
-- [ ] `POST /api/contact` - Handle contact form submissions
-- [ ] `GET /api/projects` - Return your portfolio projects
+- [x] `POST /api/contact` - Handle contact form submissions
+- [x] `GET /api/isitnotfriday` - Return "Yes" if its not Friday, "No" if it is Friday
 - [ ] `GET /api/about` - Return about me information
 
 ### 2.2 Request Validation

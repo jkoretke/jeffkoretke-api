@@ -197,52 +197,8 @@ router.get('/', (req, res) => {
                                 message: "Contact submission not found"
                             }
                         }
-                    },
-                    testUrl: `${baseUrl}/api/contact/1732876543210`
+                    },                    testUrl: `${baseUrl}/api/contact/1732876543210`
                 }
-            },
-            
-            projects: {
-                method: "GET",
-                path: "/api/projects",
-                description: "Get portfolio projects for display on website",
-                headers: {},
-                body: null,
-                parameters: {
-                    featured: {
-                        type: "boolean",
-                        description: "Filter for featured projects only (optional)",
-                        example: "?featured=true"
-                    },
-                    category: {
-                        type: "string", 
-                        description: "Filter by project category (optional)",
-                        example: "?category=mobile"
-                    }
-                },
-                responses: {
-                    200: {
-                        description: "List of portfolio projects",
-                        example: {
-                            success: true,
-                            data: [
-                                {
-                                    id: "1",
-                                    title: "Android E-Commerce App",
-                                    description: "Native Android app for online shopping with payment integration",
-                                    technologies: ["Kotlin", "MVVM", "Room", "Retrofit", "Stripe API"],
-                                    image: "/images/ecommerce-app.jpg",
-                                    demoUrl: "https://play.google.com/store/apps/details?id=com.example.shop",
-                                    githubUrl: "https://github.com/jkoretke/ecommerce-android",
-                                    featured: true,
-                                    category: "mobile",
-                                    completedDate: "2024-03-15"
-                                }
-                            ]
-                        }
-                    }
-                },
-                testUrl: `${baseUrl}/api/projects`
             },
             
             about: {
@@ -279,9 +235,42 @@ router.get('/', (req, res) => {
                                 ]
                             }
                         }
+                    }                },
+                testUrl: `${baseUrl}/api/about`
+            },
+            
+            isItNotFriday: {
+                method: "GET",
+                path: "/api/isitnotfriday",
+                description: "Check if today is NOT Friday - returns 'Yes' if not Friday, 'No' if Friday",
+                headers: {},
+                body: null,
+                responses: {
+                    200: {
+                        description: "Friday check result",
+                        example: {
+                            success: true,
+                            question: "Is it not Friday?",
+                            answer: "Yes",
+                            details: {
+                                currentDay: "Thursday",
+                                isFriday: false,
+                                dayOfWeek: 4,
+                                timestamp: "2025-05-30T00:22:09.861Z",
+                                timezone: "America/Los_Angeles"
+                            },
+                            message: "It's Thursday. Still waiting for Friday! ⏰"
+                        }
+                    },
+                    500: {
+                        description: "Internal server error",
+                        example: {
+                            success: false,
+                            message: "Internal server error while checking day"
+                        }
                     }
                 },
-                testUrl: `${baseUrl}/api/about`
+                testUrl: `${baseUrl}/api/isitnotfriday`
             }
         },
         
@@ -290,27 +279,8 @@ router.get('/', (req, res) => {
                 "https://jeffkoretke.com",
                 "https://www.jeffkoretke.com",
                 "http://localhost:3000",
-                "http://127.0.0.1:5500"
-            ],
+                "http://127.0.0.1:5500"            ],
             examples: {
-                fetchProjects: {
-                    description: "Load portfolio projects",
-                    code: `
-// Load portfolio projects
-async function loadProjects() {
-  try {
-    const response = await fetch('${baseUrl}/api/projects');
-    const result = await response.json();
-    
-    if (result.success) {
-      const projects = result.data;
-      renderProjects(projects);
-    }
-  } catch (error) {
-    console.error('Error loading projects:', error);
-  }
-}`
-                },
                 submitContact: {
                     description: "Submit contact form",
                     code: `

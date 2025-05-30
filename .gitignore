@@ -1,13 +1,15 @@
 # Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Environment variables
 .env
-
-# Logs
-logs
-*.log
-npm-debug.log*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Runtime data
 pids
@@ -18,6 +20,35 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 
+# nyc test coverage
+.nyc_output
+
+# Logs
+logs
+*.log
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -27,10 +58,6 @@ coverage/
 ehthumbs.db
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
-
-# Build outputs
+# Build output
 dist/
 build/
