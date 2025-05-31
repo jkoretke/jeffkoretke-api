@@ -1,0 +1,43 @@
+{
+  "languages": [
+    "Kotlin",
+    "Java",
+    "JavaScript",
+    "Python",
+    "C",
+    "C++"
+  ],
+  "mobile": [
+    "Android SDK",
+    "Jetpack Compose",
+    "MVVM Architecture",
+    "MVI Architecture",
+    "Clean Architecture",
+    "Coroutines",
+    "Flow",
+    "LiveData",
+    "Retrofit",
+    "Room Database",
+    "Dagger/Hilt"
+  ],
+  "backend": [
+    "Node.js",
+    "Express.js",
+    "REST APIs",
+    "SQL"
+  ],
+  "tools": [
+    "Git",
+    "Android Studio",
+    "VS Code",
+    "Figma",
+    "Postman",
+    "Firebase"
+  ],
+  "methodologies": [
+    "Agile/Scrum",
+    "Test-Driven Development",
+    "Clean Architecture",
+    "CI/CD"
+  ]
+}
