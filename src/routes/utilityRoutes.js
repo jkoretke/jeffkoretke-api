@@ -6,8 +6,9 @@ const router = express.Router();
 
 // Import utility controller
 const { isItNotFriday } = require('../controllers/utilityController');
+const { readOnlyLimiter } = require('../middleware/rateLimiter');
 
-// GET /api/isitnotfriday - Check if today is not Friday
-router.get('/', isItNotFriday);
+// GET /api/isitnotfriday - Check if today is not Friday with read-only rate limiting
+router.get('/', readOnlyLimiter, isItNotFriday);
 
 module.exports = router;

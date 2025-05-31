@@ -1,0 +1,76 @@
+# Test express-validator validation
+# Use VS Code REST Client extension to run these tests
+
+### 1. Test VALID data - should succeed
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeff@example.com",
+  "subject": "Testing the contact form validation",
+  "message": "This is a valid message that should pass all validation checks. It's long enough and contains proper content."
+}
+
+### 2. Test INVALID data - name too short
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "J",
+  "email": "jeff@example.com",
+  "subject": "Testing validation",
+  "message": "This should fail because the name is too short."
+}
+
+### 3. Test INVALID data - invalid email
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "invalid-email-format",
+  "subject": "Testing validation",
+  "message": "This should fail because the email format is invalid."
+}
+
+### 4. Test INVALID data - subject too short
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeff@example.com",
+  "subject": "Hi",
+  "message": "This should fail because the subject is too short (less than 5 characters)."
+}
+
+### 5. Test INVALID data - message too short
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeff@example.com",
+  "subject": "Testing validation",
+  "message": "Short"
+}
+
+### 6. Test INVALID data - missing required fields
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke"
+}
+
+### 7. Test INVALID data - name with invalid characters
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff123!@#",
+  "email": "jeff@example.com",
+  "subject": "Testing validation",
+  "message": "This should fail because the name contains numbers and special characters."
+}

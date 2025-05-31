@@ -12,17 +12,18 @@ const {
 } = require('../controllers/contactController');
 
 const { validateContactForm } = require('../middleware/validation');
+const { contactLimiter, readOnlyLimiter } = require('../middleware/rateLimiter');
 
-// POST /api/contact - Submit contact form
+// POST /api/contact - Submit contact form with strict rate limiting
 // This is the main endpoint your website will call
-router.post('/', validateContactForm, submitContactForm);
+router.post('/', contactLimiter, validateContactForm, submitContactForm);
 
-// GET /api/contact - Get all contact submissions (admin endpoint)
+// GET /api/contact - Get all contact submissions (admin endpoint) with read-only rate limiting
 // Useful for viewing all submissions (you might want to add auth later)
-router.get('/', getContactSubmissions);
+router.get('/', readOnlyLimiter, getContactSubmissions);
 
-// GET /api/contact/:id - Get specific contact submission
+// GET /api/contact/:id - Get specific contact submission with read-only rate limiting
 // Useful for viewing individual submissions
-router.get('/:id', getContactSubmissionById);
+router.get('/:id', readOnlyLimiter, getContactSubmissionById);
 
 module.exports = router;

@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+// Import rate limiting middleware
+const { generalLimiter } = require('./src/middleware/rateLimiter');
+
 // Create Express app (like creating an Activity in Android)
 const app = express();
 
@@ -25,6 +28,9 @@ app.use(cors({
     ],
     credentials: true
 }));
+
+// Apply general rate limiting to all requests
+app.use(generalLimiter);
 
 // Basic logging middleware (like Android's Log.d())
 app.use((req, res, next) => {

@@ -1,0 +1,80 @@
+// Test file to verify rate limiting works correctly
+// You can use this with VS Code's REST Client extension
+
+### Test General Rate Limiting - Should work fine
+GET http://localhost:3000/api/health
+
+### Test Contact Rate Limiting - Submit 6 forms quickly to trigger rate limit
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 1",
+  "email": "test1@example.com",
+  "subject": "Rate limit test 1",
+  "message": "This is a test message to check rate limiting functionality."
+}
+
+### Second contact submission
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 2",
+  "email": "test2@example.com",
+  "subject": "Rate limit test 2",
+  "message": "This is another test message to check rate limiting functionality."
+}
+
+### Third contact submission
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 3",
+  "email": "test3@example.com",
+  "subject": "Rate limit test 3",
+  "message": "This is yet another test message to check rate limiting functionality."
+}
+
+### Fourth contact submission
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 4",
+  "email": "test4@example.com",
+  "subject": "Rate limit test 4",
+  "message": "This is the fourth test message to check rate limiting functionality."
+}
+
+### Fifth contact submission
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 5",
+  "email": "test5@example.com",
+  "subject": "Rate limit test 5",
+  "message": "This is the fifth test message to check rate limiting functionality."
+}
+
+### Sixth contact submission - This should trigger rate limiting!
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User 6",
+  "email": "test6@example.com",
+  "subject": "Rate limit test 6 - Should fail",
+  "message": "This is the sixth test message and should be rate limited!"
+}
+
+### Test Read-Only Rate Limiting - Should work fine unless you spam it
+GET http://localhost:3000/api/about
+
+### Check rate limit headers
+GET http://localhost:3000/api/info
+
+### Test docs endpoint rate limiting
+GET http://localhost:3000/api/docs

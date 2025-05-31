@@ -3,9 +3,10 @@
 
 const express = require('express');
 const router = express.Router();
+const { readOnlyLimiter } = require('../middleware/rateLimiter');
 
-// GET /api/docs - Interactive API Documentation
-router.get('/', (req, res) => {
+// GET /api/docs - Interactive API Documentation with read-only rate limiting
+router.get('/', readOnlyLimiter, (req, res) => {
     const baseUrl = req.protocol + '://' + req.get('host');
     
     res.json({

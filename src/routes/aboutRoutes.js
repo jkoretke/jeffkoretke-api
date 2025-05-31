@@ -6,9 +6,10 @@ const router = express.Router();
 
 // Import about controller
 const { getAboutInfo } = require('../controllers/aboutController');
+const { readOnlyLimiter } = require('../middleware/rateLimiter');
 
-// GET /api/about - Get about me information
+// GET /api/about - Get about me information with read-only rate limiting
 // This endpoint will be called by your website to load about section
-router.get('/', getAboutInfo);
+router.get('/', readOnlyLimiter, getAboutInfo);
 
 module.exports = router;
