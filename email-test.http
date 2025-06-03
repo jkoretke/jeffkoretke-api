@@ -1,0 +1,49 @@
+### Test Email Configuration
+# This endpoint tests if your email configuration is working
+GET http://localhost:3000/api/contact/test-email
+
+###
+
+### Test Contact Form Submission with Email Notifications
+# This will send both notification and confirmation emails
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "your-test-email@gmail.com",
+  "subject": "Testing Email Notifications",
+  "message": "This is a test message to verify that email notifications are working correctly. You should receive this as a notification email, and the test email address should receive a confirmation."
+}
+
+###
+
+### Test Contact Form with Your Real Email
+# Replace with your actual email to test confirmation email
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Jeff Koretke",
+  "email": "jeffkoretkewebsite@gmail.com",
+  "subject": "Email System Test",
+  "message": "Testing the contact form email system. This should send both a notification to me and a confirmation back to the sender."
+}
+
+###
+
+### Invalid Email Test (should fail validation)
+POST http://localhost:3000/api/contact
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "invalid-email",
+  "subject": "Test",
+  "message": "This should fail due to invalid email format."
+}
+
+###
+
+### Get All Contact Submissions
+GET http://localhost:3000/api/contact

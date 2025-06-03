@@ -99,9 +99,9 @@ Start with these simple endpoints (think of them like Android Intent filters):
   - skills.json (your technical skills) ✅ **Created with categorized technical skills**
 
 ### 3.2 Contact Form Handling
-- [ ] Set up email service (nodemailer with Gmail/SendGrid)
-- [ ] Store contact submissions temporarily in memory
-- [ ] Add email notifications for new contacts
+- [x] Set up email service (nodemailer with Gmail/SendGrid) ✅ **COMPLETED** - Working with Gmail SMTP
+- [x] Store contact submissions temporarily in memory ✅ **COMPLETED** - Contact submissions stored and accessible
+- [x] Add email notifications for new contacts ✅ **COMPLETED** - Both notification and confirmation emails working
 
 ### 3.3 Email Setup (Optional but Recommended)
 - [ ] Set up custom email address: jeff@jeffkoretke.com
@@ -137,22 +137,138 @@ For future expansion (similar to Android's Room database):
 - [ ] Write integration tests for API endpoints
 - [ ] Set up test scripts in package.json
 
+### 4.4 Docker Containerization
+- [ ] Install Docker on your system
+  - **Ubuntu**: `sudo apt install docker.io docker-compose`
+  - **Verify**: `docker --version` and `docker-compose --version`
+- [ ] Create Dockerfile for your API
+- [ ] Create .dockerignore file
+- [ ] Create docker-compose.yml for local development
+- [ ] Build and test Docker container locally
+- [ ] Optimize Docker image size
+- [ ] Document Docker commands for team/deployment
+
+#### Docker Configuration Files:
+
+**Dockerfile**:
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files first (for better caching)
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copy source code
+COPY . .
+
+EXPOSE 3000
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+USER nextjs
+
+CMD ["npm", "start"]
+```
+
+**.dockerignore**:
+```
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+.nyc_output
+coverage
+.env
+tests/
+*.md
+.vscode/
+```
+
+**docker-compose.yml**:
+```yaml
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+```
+
+#### Docker Benefits for Your Project:
+- **Consistency**: Same environment across development, testing, and production
+- **Easy deployment**: Single container to deploy anywhere
+- **Isolation**: Your app dependencies don't conflict with system packages
+- **Portability**: Works on any system that runs Docker
+- **Professional portfolio**: Shows modern DevOps knowledge
+
+#### Docker Commands to Know:
+```bash
+# Build your container
+docker build -t jeffkoretke-api .
+
+# Run container locally
+docker run -p 3000:3000 jeffkoretke-api
+
+# Use docker-compose for development
+docker-compose up
+
+# Stop and remove containers
+docker-compose down
+
+# Rebuild after code changes
+docker-compose up --build
+```
+
 ## Phase 5: Deployment
 
 ### 5.1 Platform Selection
-Choose one deployment platform:
-- **Recommended for beginners**: Vercel or Netlify Functions
-- **Alternative options**: Heroku, Railway, or DigitalOcean
+Choose one deployment platform (Docker compatible):
+- **Recommended for beginners**: Railway, Render, or DigitalOcean App Platform (all support Docker)
+- **Container-focused options**: Google Cloud Run, AWS ECS, DigitalOcean Droplet with Docker
+- **Traditional options**: Heroku (with container registry), Vercel (with Docker builds)
 
 ### 5.2 Deployment Configuration
 - [ ] Create production environment variables
 - [ ] Set up deployment scripts
 - [ ] Configure domain/subdomain (api.jeffkoretke.com)
 - [ ] Set up SSL certificate
+- [ ] Deploy Docker container to chosen platform
+- [ ] Test deployed API endpoints
 
 ### 5.3 CI/CD (Optional)
 - [ ] GitHub Actions for automated testing
+- [ ] Automated Docker image building
 - [ ] Automated deployment on push to main branch
+- [ ] Container vulnerability scanning
+
+#### Sample GitHub Actions for Docker:
+```yaml
+# .github/workflows/deploy.yml
+name: Build and Deploy
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -t jeffkoretke-api .
+      - name: Deploy to production
+        run: # Platform-specific deployment command
+```
 
 ## Phase 6: Integration with Your Website
 
@@ -197,8 +313,9 @@ POST /api/contact             # Submit contact form
 - **Week 1**: Phase 1 & 2.1 (Basic setup and simple endpoints)
 - **Week 2**: Phase 2.2 & 2.3 (Validation and rate limiting)
 - **Week 3**: Phase 3.1 & 3.2 (Data management and contact form)
-- **Week 4**: Phase 4 (Security and testing)
-- **Week 5**: Phase 5 (Deployment)
+- **Week 4**: Phase 4.1-4.3 (Security, testing)
+- **Week 4.5**: Phase 4.4 (Docker setup and containerization)
+- **Week 5**: Phase 5 (Deployment with Docker)
 - **Week 6**: Phase 6 (Integration and optimization)
 
 ## Android Developer Notes
@@ -210,11 +327,23 @@ POST /api/contact             # Submit contact form
 - **Models** = Data classes/Room entities
 - **Environment variables** = BuildConfig fields
 - **API testing** = Unit testing with Mockito/Espresso
+- **Docker containers** = APK files (packaged, portable applications)
 
 ### Key Differences
 - Stateless vs stateful (no persistent UI state)
 - Request/response cycle vs event-driven UI
 - Multiple concurrent requests vs single user interactions
+- Server deployment vs app store distribution
+
+## Docker vs Android Packaging Analogy
+
+| Android | Docker |
+|---------|---------|
+| APK file | Docker image |
+| Android Runtime (ART) | Docker Engine |
+| Play Store distribution | Container registry (Docker Hub) |
+| Device installation | Container deployment |
+| App dependencies in APK | All dependencies in container |
 
 ## Next Steps
 

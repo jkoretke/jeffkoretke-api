@@ -2,6 +2,7 @@
 // Similar to how you'd handle form submissions in Android (like a Fragment handling user input)
 
 const { validationResult } = require('express-validator');
+const { sendContactNotification, sendConfirmationEmail } = require('../utils/emailService');
 
 // In-memory storage for contact submissions (for now)
 // In production, you'd save this to a database or send via email
@@ -46,6 +47,21 @@ const submitContactForm = async (req, res) => {
         console.log(`📩 New contact submission from ${contactSubmission.name} (${contactSubmission.email})`);
         console.log(`📝 Subject: ${contactSubmission.subject}`);
 
+        // Send email notifications
+        try {
+            // Send notification to you
+            await sendContactNotification(contactSubmission);
+            
+            // Send confirmation to the submitter
+            await sendConfirmationEmail(contactSubmission);
+            
+            console.log('✅ Email notifications sent successfully');
+        } catch (emailError) {
+            // Log email error but don't fail the request
+            console.error('⚠️ Email notification failed:', emailError);
+            // Continue processing - the form submission is still valid
+        }
+
         // Send success response
         res.status(201).json({
             success: true,
@@ -53,12 +69,6 @@ const submitContactForm = async (req, res) => {
             submissionId: contactSubmission.id,
             timestamp: contactSubmission.timestamp
         });
-
-        // TODO: In the future, you could:
-        // 1. Send an email notification using nodemailer
-        // 2. Save to a database
-        // 3. Send a confirmation email to the user
-        // 4. Integrate with a CRM system
 
     } catch (error) {
         console.error('❌ Error processing contact form:', error);
