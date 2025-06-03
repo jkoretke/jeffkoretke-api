@@ -3,10 +3,7 @@
 
 const { validationResult } = require('express-validator');
 const { sendContactNotification, sendConfirmationEmail } = require('../utils/emailService');
-
-// In-memory storage for contact submissions (for now)
-// In production, you'd save this to a database or send via email
-const contactSubmissions = [];
+const Contact = require('../models/Contact');
 
 /**
  * Handle contact form submission
@@ -28,32 +25,41 @@ const submitContactForm = async (req, res) => {
         // Extract validated data from request body
         const { name, email, subject, message } = req.body;
 
-        // Create contact submission object
-        const contactSubmission = {
-            id: Date.now().toString(), // Simple ID generation
+        // Create contact submission in database
+        const contactSubmission = new Contact({
             name: name.trim(),
             email: email.trim().toLowerCase(),
-            subject: subject.trim(),
-            message: message.trim(),
-            timestamp: new Date().toISOString(),
-            ip: req.ip || req.connection.remoteAddress, // Track IP for security
+            message: `Subject: ${subject.trim()}\n\n${message.trim()}`,
+            ipAddress: req.ip || req.connection.remoteAddress,
             userAgent: req.get('User-Agent') || 'Unknown'
-        };
+        });
 
-        // Store the submission (in memory for now)
-        contactSubmissions.push(contactSubmission);
+        // Save to database
+        const savedSubmission = await contactSubmission.save();
 
         // Log the submission (like Android's Log.i())
-        console.log(`📩 New contact submission from ${contactSubmission.name} (${contactSubmission.email})`);
-        console.log(`📝 Subject: ${contactSubmission.subject}`);
+        console.log(`📩 New contact submission from ${savedSubmission.name} (${savedSubmission.email})`);
+        console.log(`📝 ID: ${savedSubmission._id}`);
 
         // Send email notifications
         try {
             // Send notification to you
-            await sendContactNotification(contactSubmission);
+            await sendContactNotification({
+                id: savedSubmission._id,
+                name: savedSubmission.name,
+                email: savedSubmission.email,
+                subject: subject.trim(),
+                message: message.trim(),
+                timestamp: savedSubmission.submittedAt.toISOString()
+            });
             
             // Send confirmation to the submitter
-            await sendConfirmationEmail(contactSubmission);
+            await sendConfirmationEmail({
+                name: savedSubmission.name,
+                email: savedSubmission.email,
+                subject: subject.trim(),
+                message: message.trim()
+            });
             
             console.log('✅ Email notifications sent successfully');
         } catch (emailError) {
@@ -66,8 +72,8 @@ const submitContactForm = async (req, res) => {
         res.status(201).json({
             success: true,
             message: 'Contact form submitted successfully',
-            submissionId: contactSubmission.id,
-            timestamp: contactSubmission.timestamp
+            submissionId: savedSubmission._id,
+            timestamp: savedSubmission.submittedAt
         });
 
     } catch (error) {
@@ -86,20 +92,33 @@ const submitContactForm = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const getContactSubmissions = (req, res) => {
+const getContactSubmissions = async (req, res) => {
     try {
         // In production, you'd add authentication/authorization here
-        // For now, return all submissions (you might want to limit this later)
+        const { page = 1, limit = 10, status } = req.query;
+        
+        // Build query
+        const query = {};
+        if (status) {
+            query.status = status;
+        }
+        
+        // Get submissions with pagination
+        const submissions = await Contact.find(query)
+            .select('-ipAddress -userAgent') // Don't expose sensitive info
+            .sort({ submittedAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+            
+        const total = await Contact.countDocuments(query);
         
         res.json({
             success: true,
-            count: contactSubmissions.length,
-            submissions: contactSubmissions.map(submission => ({
-                ...submission,
-                // Don't expose sensitive info like IP in admin view
-                ip: undefined,
-                userAgent: undefined
-            }))
+            count: submissions.length,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / limit),
+            submissions
         });
     } catch (error) {
         console.error('❌ Error fetching contact submissions:', error);
@@ -117,11 +136,12 @@ const getContactSubmissions = (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
-const getContactSubmissionById = (req, res) => {
+const getContactSubmissionById = async (req, res) => {
     try {
         const { id } = req.params;
         
-        const submission = contactSubmissions.find(sub => sub.id === id);
+        const submission = await Contact.findById(id)
+            .select('-ipAddress -userAgent'); // Don't expose sensitive info
         
         if (!submission) {
             return res.status(404).json({
@@ -132,11 +152,7 @@ const getContactSubmissionById = (req, res) => {
         
         res.json({
             success: true,
-            submission: {
-                ...submission,
-                ip: undefined, // Don't expose IP
-                userAgent: undefined
-            }
+            submission
         });
     } catch (error) {
         console.error('❌ Error fetching contact submission:', error);

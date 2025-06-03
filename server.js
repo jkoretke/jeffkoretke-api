@@ -2,8 +2,14 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+// Import database connection
+const connectDB = require('./src/config/database');
+
 // Import rate limiting middleware
 const { generalLimiter } = require('./src/middleware/rateLimiter');
+
+// Connect to database
+connectDB();
 
 // Create Express app (like creating an Activity in Android)
 const app = express();
@@ -43,14 +49,14 @@ const contactRoutes = require('./src/routes/contactRoutes');
 const docsRoutes = require('./src/routes/docsRoutes');
 const utilityRoutes = require('./src/routes/utilityRoutes');
 const aboutRoutes = require('./src/routes/aboutRoutes');
-// const skillsRoutes = require('./src/routes/skillsRoutes');
+const skillsRoutes = require('./src/routes/skillsRoutes');
 
 // Use routes
 app.use('/api/contact', contactRoutes);
 app.use('/api/docs', docsRoutes);
 app.use('/api/isitnotfriday', utilityRoutes);
 app.use('/api/about', aboutRoutes);
-// app.use('/api/skills', skillsRoutes);
+app.use('/api/skills', skillsRoutes);
 
 // Health check endpoint (like a simple ping in Android)
 app.get('/api/health', (req, res) => {

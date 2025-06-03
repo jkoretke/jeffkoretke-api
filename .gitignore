@@ -72,3 +72,7 @@ tmp/
 
 # Prettier cache
 .prettier-cache
+
+# Database backups (keep directory structure but exclude backup files)
+src/backups/*.json
+src/backups/backup-*
