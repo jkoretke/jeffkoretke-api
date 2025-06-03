@@ -7,41 +7,29 @@ This plan outlines the steps to create a simple Express.js REST API that will se
 
 ### 1.1 Initialize Node.js Project
 
-#### Prerequisites for Windows
-- [x] Install Node.js from [nodejs.org](https://nodejs.org/) (includes npm) ✅ **v22.16.0 installed**
-- [x] Verify installation: `node --version` and `npm --version` ✅ **Working with PATH fix**
-- [x] Use PowerShell as your terminal (recommended for Windows) ✅ **Using VS Code terminal**
-
-#### PATH Issue Note
-**⚠️ Important**: Node.js is installed but requires PATH fix. Choose one:
-- **Recommended**: Add `C:\Program Files\nodejs` to System PATH permanently
-- **Temporary**: Run `$env:PATH += ";C:\Program Files\nodejs"` each session
+#### Prerequisites for Ubuntu
+- [x] Install Node.js: `sudo apt update && sudo apt install nodejs npm` ✅ **v22.16.0 installed**
+- [x] Verify installation: `node --version` && `npm --version` ✅ **Both working properly**
+- [x] Use terminal (bash/zsh) ✅ **Using VS Code terminal**
 
 #### Project Initialization
-- [x] Navigate to project directory: `cd c:\Users\jeffr\VSCodeProjects\jeffkoretke-api\jeffkoretke-api`
+- [x] Navigate to project directory: `cd /home/jeff/VSCodeProjects/jeff-koretke-api/jeffkoretke-api`
 - [x] Initialize npm project with `npm init -y`
 - [x] Install core dependencies:
-  ```powershell
-  npm install express cors dotenv
+  ```bash
+  npm install express cors dotenv mongoose express-validator express-rate-limit nodemailer
   npm install --save-dev nodemon
   ```
 
 ### 1.2 Project Structure
-Create the following folder structure using PowerShell:
-```powershell
+Create the following folder structure using bash:
+```bash
 # Create directory structure
-New-Item -ItemType Directory -Path "src"
-New-Item -ItemType Directory -Path "src\controllers"
-New-Item -ItemType Directory -Path "src\routes"
-New-Item -ItemType Directory -Path "src\middleware"
-New-Item -ItemType Directory -Path "src\models"
-New-Item -ItemType Directory -Path "src\utils"
-New-Item -ItemType Directory -Path "tests"
+mkdir -p src/{controllers,routes,middleware,models,utils,data,scripts,config,backups}
+mkdir -p tests
 
 # Create initial files
-New-Item -ItemType File -Path ".env"
-New-Item -ItemType File -Path ".gitignore"
-New-Item -ItemType File -Path "server.js"
+touch .env .gitignore server.js
 ```
 
 Final structure:
@@ -51,7 +39,11 @@ jeffkoretke-api/
 │   ├── controllers/     # Route handlers (like Android Activities/Fragments)
 │   ├── routes/         # API endpoints definition
 │   ├── middleware/     # Custom middleware functions
-│   ├── models/         # Data models (if using database later)
+│   ├── models/         # Data models for MongoDB
+│   ├── config/         # Database and app configuration
+│   ├── data/           # Static JSON data files
+│   ├── scripts/        # Migration and utility scripts
+│   ├── backups/        # Database backup files
 │   └── utils/          # Helper functions
 ├── tests/              # Unit and integration tests
 ├── .env               # Environment variables (not committed to git)
