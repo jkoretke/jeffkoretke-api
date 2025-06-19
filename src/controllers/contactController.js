@@ -4,6 +4,8 @@
 const { validationResult } = require('express-validator');
 const { sendContactNotification, sendConfirmationEmail } = require('../utils/emailService');
 const Contact = require('../models/Contact');
+const { Log } = require('../utils/simpleLogger');
+const { ValidationError, DatabaseError } = require('../middleware/errorHandler');
 
 /**
  * Handle contact form submission
@@ -37,9 +39,18 @@ const submitContactForm = async (req, res) => {
         // Save to database
         const savedSubmission = await contactSubmission.save();
 
-        // Log the submission (like Android's Log.i())
-        console.log(`📩 New contact submission from ${savedSubmission.name} (${savedSubmission.email})`);
-        console.log(`📝 ID: ${savedSubmission._id}`);
+        // Log the submission using new logging system
+        const requestLogger = req.logger || Log;
+        requestLogger.business(
+            'ContactSubmission',
+            `New contact submission from ${savedSubmission.name} (${savedSubmission.email})`,
+            {
+                submissionId: savedSubmission._id,
+                name: savedSubmission.name,
+                email: savedSubmission.email,
+                subject: subject.trim()
+            }
+        );
 
         // Send email notifications
         try {
@@ -61,10 +72,10 @@ const submitContactForm = async (req, res) => {
                 message: message.trim()
             });
             
-            console.log('✅ Email notifications sent successfully');
+            requestLogger.i('EmailNotification', 'Email notifications sent successfully');
         } catch (emailError) {
             // Log email error but don't fail the request
-            console.error('⚠️ Email notification failed:', emailError);
+            requestLogger.w('EmailNotification', 'Email notification failed', { error: emailError.message });
             // Continue processing - the form submission is still valid
         }
 
@@ -77,13 +88,19 @@ const submitContactForm = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error processing contact form:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while processing contact form',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        // Database errors
+        if (error.name === 'ValidationError') {
+            throw new ValidationError('Contact form validation failed', Object.values(error.errors).map(err => ({
+                type: 'field',
+                message: err.message,
+                field: err.path,
+                value: err.value,
+                location: 'body'
+            })));
+        }
+
+        // General database error
+        throw new DatabaseError('Failed to save contact submission', error);
     }
 };
 
@@ -121,13 +138,7 @@ const getContactSubmissions = async (req, res) => {
             submissions
         });
     } catch (error) {
-        console.error('❌ Error fetching contact submissions:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching submissions',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        throw new DatabaseError('Failed to fetch contact submissions', error);
     }
 };
 
@@ -155,13 +166,7 @@ const getContactSubmissionById = async (req, res) => {
             submission
         });
     } catch (error) {
-        console.error('❌ Error fetching contact submission:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching submission',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        throw new DatabaseError('Failed to fetch contact submission', error);
     }
 };
 

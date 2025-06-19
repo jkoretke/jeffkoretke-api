@@ -1,6 +1,8 @@
 // Utility controller - handles simple utility endpoints
 // Similar to Android utility classes that provide helper functions
 
+const { Log } = require('../utils/simpleLogger');
+
 /**
  * Check if today is NOT Friday
  * Returns "Yes" if it's not Friday, "No" if it is Friday
@@ -25,8 +27,9 @@ const isItNotFriday = (req, res) => {
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const currentDay = dayNames[dayOfWeek];
         
-        // Log the check (like Android's Log.d())
-        console.log(`📅 Friday check: Today is ${currentDay}, is it NOT Friday? ${answer}`);
+        // Log the check using new logging system
+        const requestLogger = req.logger || Log;
+        requestLogger.d('FridayCheck', `Today is ${currentDay}, is it NOT Friday? ${answer}`);
         
         // Send response
         res.json({
@@ -46,7 +49,8 @@ const isItNotFriday = (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error checking if it\'s not Friday:', error);
+        const requestLogger = req.logger || Log;
+        requestLogger.e('FridayCheck', 'Error checking if it\'s not Friday', error);
         
         res.status(500).json({
             success: false,

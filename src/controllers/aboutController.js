@@ -4,6 +4,8 @@
 // Import models
 const About = require('../models/About');
 const Skill = require('../models/Skill');
+const { Log } = require('../utils/simpleLogger');
+const { NotFoundError, DatabaseError } = require('../middleware/errorHandler');
 
 /**
  * Get about me information
@@ -17,10 +19,7 @@ const getAboutInfo = async (req, res) => {
         const aboutData = await About.findOne({ isActive: true });
         
         if (!aboutData) {
-            return res.status(404).json({
-                success: false,
-                message: 'About information not found'
-            });
+            throw new NotFoundError('About information not found');
         }
 
         // Get all active skills grouped by category
@@ -57,8 +56,16 @@ const getAboutInfo = async (req, res) => {
             skills: skillsByCategory
         };
 
-        // Log the request (like Android's Log.i())
-        console.log(`📋 About info requested from ${req.ip || 'unknown IP'}`);
+        // Log the request using new logging system
+        const requestLogger = req.logger || Log;
+        requestLogger.business(
+            'AboutRequest',
+            'About information requested',
+            {
+                ip: req.ip || 'unknown',
+                userAgent: req.get('User-Agent') || 'unknown'
+            }
+        );
 
         // Return successful response
         res.json({
@@ -69,13 +76,7 @@ const getAboutInfo = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error fetching about information:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching about information',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        throw new DatabaseError('Failed to fetch about information', error);
     }
 };
 

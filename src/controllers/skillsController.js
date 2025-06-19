@@ -3,6 +3,8 @@
 
 // Import skills model
 const Skill = require('../models/Skill');
+const { Log } = require('../utils/simpleLogger');
+const { DatabaseError } = require('../middleware/errorHandler');
 
 /**
  * Get technical skills information
@@ -44,13 +46,7 @@ const getSkills = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error fetching skills information:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching skills information',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        throw new DatabaseError('Failed to fetch skills information', error);
     }
 };
 
@@ -104,13 +100,7 @@ const getSkillsByCategory = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Error fetching skills by category:', error);
-        
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error while fetching skills by category',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        throw new DatabaseError('Failed to fetch skills by category', error);
     }
 };
 

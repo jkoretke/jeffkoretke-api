@@ -16,6 +16,22 @@ const { generalLimiter } = require('./src/middleware/rateLimiter');
 // Import security middleware
 const { enforceHTTPS, additionalSecurityHeaders, sanitizeRequest, securityLogger } = require('./src/middleware/security');
 
+// Import comprehensive logging and error handling
+const { Log, morganStream } = require('./src/utils/simpleLogger');
+const { 
+    errorHandler, 
+    notFoundHandler, 
+    handleUncaughtExceptions,
+    handleValidationResult 
+} = require('./src/middleware/errorHandler');
+const { requestLogger, metricsLogger } = require('./src/middleware/requestLogger');
+
+// Initialize uncaught exception handlers
+handleUncaughtExceptions();
+
+// Initialize metrics collection
+const metrics = metricsLogger();
+
 // Connect to database
 connectDB();
 
@@ -58,14 +74,17 @@ app.use(helmet({
     xssFilter: true
 }));
 
-// Request logging with morgan - different formats for different environments
+// Request logging with morgan - integrated with Winston
 if (isProduction) {
-    // Production: combined log format
-    app.use(morgan('combined'));
+    // Production: combined log format to Winston stream
+    app.use(morgan('combined', { stream: morganStream }));
 } else {
-    // Development: more detailed custom format
-    app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date[clf]'));
+    // Development: more detailed custom format to Winston stream
+    app.use(morgan(':method :url :status :res[content-length] - :response-time ms :date[clf]', { stream: morganStream }));
 }
+
+// Comprehensive request/response logging middleware
+app.use(requestLogger);
 
 // Security middleware - HTTPS enforcement (must be early in middleware chain)
 app.use(enforceHTTPS);
@@ -119,23 +138,6 @@ app.use(cors(corsOptions));
 
 // Apply general rate limiting to all requests
 app.use(generalLimiter);
-
-// Enhanced error logging middleware
-app.use((req, res, next) => {
-    // Add request ID for tracking
-    req.requestId = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    
-    // Log additional details in development
-    if (isDevelopment) {
-        console.log(`[${req.requestId}] ${new Date().toISOString()} - ${req.method} ${req.path}`);
-        console.log(`[${req.requestId}] Headers:`, req.headers);
-        if (req.body && Object.keys(req.body).length > 0) {
-            console.log(`[${req.requestId}] Body:`, req.body);
-        }
-    }
-    
-    next();
-});
 
 // Import routes
 const contactRoutes = require('./src/routes/contactRoutes');
@@ -194,54 +196,32 @@ app.get('/', (req, res) => {
     });
 });
 
-// 404 handler for undefined routes
-app.use((req, res) => {
-    res.status(404).json({
-        error: 'Endpoint not found',
-        path: req.originalUrl,
-        suggestion: 'Check /api/info for available endpoints'
-    });
-});
+// 404 handler for undefined routes (replaced with comprehensive handler)
+app.use(notFoundHandler);
 
-// Global error handler (like a try-catch in Android)
-app.use((error, req, res, next) => {
-    // Log error with request ID for tracking
-    const requestId = req.requestId || 'unknown';
-    console.error(`[${requestId}] Error:`, error);
-    
-    // Security: Don't expose sensitive error details in production
-    if (isProduction) {
-        res.status(500).json({
-            error: 'Internal server error',
-            requestId: requestId,
-            timestamp: new Date().toISOString()
-        });
-    } else {
-        res.status(500).json({
-            error: 'Internal server error',
-            message: error.message,
-            stack: error.stack,
-            requestId: requestId,
-            timestamp: new Date().toISOString()
-        });
-    }
-});
+// Global error handler (comprehensive error handling middleware)
+app.use(errorHandler);
 
 // Start the server (like calling setContentView() and starting your Activity)
 const server = app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🌍 Environment: ${config.NODE_ENV}`);
-    console.log(`🛡️  Security: Helmet enabled`);
-    console.log(`📝 Logging: Morgan enabled`);
-    console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
-    console.log(`📋 API info: http://localhost:${PORT}/api/info`);
+    Log.i('Server', `🚀 Server running on port ${PORT}`);
+    Log.i('Server', `🌍 Environment: ${config.NODE_ENV}`);
+    Log.i('Server', `🛡️  Security: Helmet enabled`);
+    Log.i('Server', `📝 Logging: Winston + Morgan enabled`);
+    Log.i('Server', `📍 Health check: http://localhost:${PORT}/api/health`);
+    Log.i('Server', `📋 API info: http://localhost:${PORT}/api/info`);
     
     if (isProduction) {
-        console.log(`🔒 HTTPS enforcement enabled`);
-        console.log(`🔐 Production security headers active`);
+        Log.i('Server', `🔒 HTTPS enforcement enabled`);
+        Log.i('Server', `🔐 Production security headers active`);
     } else {
-        console.log(`🔧 Development mode - Enhanced logging enabled`);
+        Log.i('Server', `🔧 Development mode - Enhanced logging enabled`);
     }
+    
+    // Start periodic metrics logging
+    setInterval(() => {
+        metrics.logPeriodic();
+    }, 60000); // Log metrics every minute
 });
 
 // Export app for testing purposes
