@@ -96,7 +96,7 @@ NODE_ENV=production
 PORT=3000
 
 # Database
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/db
+MONGODB_URI=mongodb+srv://username:password@your-cluster.mongodb.net/your-database
 
 # Email Service
 EMAIL_USER=your-email@gmail.com
