@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # Main API service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jeffkoretke-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker
+    restart: unless-stopped
+    networks:
+      - api-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      # Mount logs directory for persistence (optional)
+      - ./logs:/app/logs
+
+  # Development version with hot reload
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: jeffkoretke-api-dev
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+    restart: unless-stopped
+    networks:
+      - api-network
+    profiles:
+      - dev
+
+  # MongoDB service (optional - for local development)
+  mongodb:
+    image: mongo:7.0
+    container_name: jeffkoretke-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+      - MONGO_INITDB_DATABASE=jeffkoretke-api
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    networks:
+      - api-network
+    profiles:
+      - local-db
+
+  # Redis service (optional - for caching/session storage)
+  redis:
+    image: redis:7.2-alpine
+    container_name: jeffkoretke-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - api-network
+    profiles:
+      - cache
+
+networks:
+  api-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  redis_data:

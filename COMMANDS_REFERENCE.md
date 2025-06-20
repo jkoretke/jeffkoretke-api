@@ -281,14 +281,20 @@ tail -f logs/access-$(date +%Y-%m-%d).log | grep "POST\|GET\|PUT\|DELETE"
 ### Basic Docker Operations
 
 ```bash
-# Build Docker image
+# Build production Docker image
 docker build -t jeffkoretke-api .
 
-# Run container
-docker run -p 3000:3000 jeffkoretke-api
+# Build development Docker image
+docker build -f Dockerfile.dev -t jeffkoretke-api:dev .
 
-# Run container in detached mode
-docker run -d -p 3000:3000 --name jeffkoretke-api-container jeffkoretke-api
+# Run production container
+docker run -p 3000:3000 --env-file .env.docker jeffkoretke-api
+
+# Run container in detached mode with restart policy
+docker run -d -p 3000:3000 --name jeffkoretke-api-container --restart unless-stopped --env-file .env.docker jeffkoretke-api
+
+# Run development container with volume mounting
+docker run -p 3000:3000 -v $(pwd):/app --env-file .env.docker jeffkoretke-api:dev
 
 # Stop container
 docker stop jeffkoretke-api-container
@@ -298,28 +304,167 @@ docker rm jeffkoretke-api-container
 
 # Remove image
 docker rmi jeffkoretke-api
+
+# View container logs
+docker logs jeffkoretke-api-container
+
+# Follow container logs in real-time
+docker logs -f jeffkoretke-api-container
+
+# Execute commands in running container
+docker exec -it jeffkoretke-api-container sh
+
+# Check container health status
+docker inspect --format='{{.State.Health.Status}}' jeffkoretke-api-container
 ```
 
-### Docker Compose
+### Docker Compose Operations
 
 ```bash
-# Start services
+# Start production services
 docker-compose up
 
 # Start in detached mode
 docker-compose up -d
 
+# Start development environment
+docker-compose --profile dev up
+
+# Start with local MongoDB
+docker-compose --profile local-db up
+
+# Start with Redis cache
+docker-compose --profile cache up
+
+# Start full development stack (API + MongoDB + Redis)
+docker-compose --profile dev --profile local-db --profile cache up
+
 # Rebuild and start
 docker-compose up --build
+
+# Force recreate containers
+docker-compose up --force-recreate
 
 # Stop services
 docker-compose down
 
-# View logs
+# Stop and remove volumes
+docker-compose down -v
+
+# Stop and remove everything (containers, networks, images)
+docker-compose down --rmi all -v
+
+# View logs for all services
 docker-compose logs
+
+# View logs for specific service
+docker-compose logs api
 
 # Follow logs in real-time
 docker-compose logs -f
+
+# Scale services (if configured)
+docker-compose up --scale api=3
+
+# Check service health
+docker-compose ps
+```
+
+### Docker Image Management
+
+```bash
+# List all images
+docker images
+
+# Remove unused images
+docker image prune
+
+# Remove all unused containers, networks, images
+docker system prune
+
+# Remove everything including volumes
+docker system prune -a --volumes
+
+# Tag image for registry
+docker tag jeffkoretke-api:latest your-registry/jeffkoretke-api:v1.0.0
+
+# Push to registry
+docker push your-registry/jeffkoretke-api:v1.0.0
+
+# Pull from registry
+docker pull your-registry/jeffkoretke-api:v1.0.0
+
+# Inspect image layers
+docker history jeffkoretke-api
+
+# Get image size information
+docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}"
+```
+
+### Container Monitoring & Debugging
+
+```bash
+# Monitor container resource usage
+docker stats jeffkoretke-api-container
+
+# Monitor all containers
+docker stats
+
+# Inspect container configuration
+docker inspect jeffkoretke-api-container
+
+# Check container processes
+docker top jeffkoretke-api-container
+
+# View container filesystem changes
+docker diff jeffkoretke-api-container
+
+# Export container as tar
+docker export jeffkoretke-api-container > jeffkoretke-api-backup.tar
+
+# Copy files from container
+docker cp jeffkoretke-api-container:/app/logs ./container-logs
+
+# Copy files to container
+docker cp ./config.json jeffkoretke-api-container:/app/
+```
+
+### Network Management
+
+```bash
+# List Docker networks
+docker network ls
+
+# Inspect network
+docker network inspect jeffkoretke-api_api-network
+
+# Create custom network
+docker network create --driver bridge custom-api-network
+
+# Connect container to network
+docker network connect custom-api-network jeffkoretke-api-container
+
+# Disconnect container from network
+docker network disconnect custom-api-network jeffkoretke-api-container
+```
+
+### Volume Management
+
+```bash
+# List volumes
+docker volume ls
+
+# Create volume
+docker volume create jeffkoretke-api-data
+
+# Inspect volume
+docker volume inspect jeffkoretke-api-data
+
+# Remove unused volumes
+docker volume prune
+
+# Backup volume
+docker run --rm -v jeffkoretke-api-data:/data -v $(pwd):/backup alpine tar czf /backup/backup.tar.gz /data
 ```
 
 ## Git Commands
