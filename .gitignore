@@ -22,13 +22,29 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
+*.lcov
 
 # nyc test coverage
 .nyc_output
 
+# Jest test cache and output
+.jest/
+jest_*
+*.snap
+
+# Test artifacts and reports
+test-results/
+test-reports/
+junit.xml
+
 # Logs
-logs
+logs/
 *.log
+access-*.log
+application-*.log
+error-*.log
+exceptions.log
+rejections.log
 
 # Optional npm cache directory
 .npm
@@ -79,3 +95,15 @@ tmp/
 # Database backups (keep directory structure but exclude backup files)
 src/backups/*.json
 src/backups/backup-*
+
+# Documentation and summary files (these can be committed)
+# TESTING_COMPLETE.md
+# API_IMPLEMENTATION_PLAN.md
+# IMPLEMENTATION_SUMMARY.md
+
+# Development and testing HTTP files (keep these for API testing)
+# *.http files are useful for development
+
+# Large log files and rotating logs
+logs/*.log.*
+logs/archive/
