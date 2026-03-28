@@ -19,6 +19,7 @@ const getSkills = async (req, res) => {
             .sort({ category: 1, displayOrder: 1 });
         
         // Group skills by category
+        const categoryOrder = ['ai', 'mobile', 'languages', 'backend', 'tools', 'methodologies', 'frameworks', 'platforms', 'databases'];
         const skillsByCategory = skills.reduce((acc, skill) => {
             if (!acc[skill.category]) {
                 acc[skill.category] = [];
@@ -32,15 +33,22 @@ const getSkills = async (req, res) => {
             return acc;
         }, {});
 
+        // Sort categories by custom order
+        const sortedSkillsByCategory = Object.fromEntries(
+            categoryOrder
+                .filter(cat => skillsByCategory[cat])
+                .map(cat => [cat, skillsByCategory[cat]])
+        );
+
         // Log the request (like Android's Log.i())
         console.log(`🛠️ Skills info requested from ${req.ip || 'unknown IP'}`);
 
         // Return successful response with skills data
         res.json({
             success: true,
-            data: skillsByCategory,
+            data: sortedSkillsByCategory,
             totalSkills: skills.length,
-            categories: Object.keys(skillsByCategory),
+            categories: Object.keys(sortedSkillsByCategory),
             lastUpdated: skills.length > 0 ? Math.max(...skills.map(s => new Date(s.updatedAt))) : new Date(),
             message: "Skills information retrieved successfully"
         });
