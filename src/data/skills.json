@@ -1,4 +1,11 @@
 {
+  "ai": [
+    { "name": "Claude Code", "proficiency": "expert", "yearsOfExperience": 1 },
+    { "name": "Gemini CLI", "proficiency": "advanced", "yearsOfExperience": 1 },
+    { "name": "Agentic Workflows", "proficiency": "expert", "yearsOfExperience": 1 },
+    { "name": "Multi-Model Orchestration", "proficiency": "advanced", "yearsOfExperience": 1 },
+    { "name": "Prompt Engineering", "proficiency": "expert", "yearsOfExperience": 2 }
+  ],
   "languages": [
     "Kotlin",
     "Java",

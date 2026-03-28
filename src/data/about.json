@@ -1,7 +1,7 @@
 {
   "name": "Jeff Koretke",
   "title": "Android Developer",
-  "bio": "Experienced Android developer with expertise in Kotlin, MVI, MVVM and clean architecture, and modern Android development practices. Passionate about creating intuitive user experiences and writing clean, maintainable code.",
+  "bio": "Experienced Android developer with deep expertise in Kotlin, MVI, MVVM, clean architecture, and modern Android development. Passionate about designing agentic, self-updating development workflows that maximize efficiency by strategically routing work across multiple AI models — exploiting the distinct strengths of each to compound output quality while minimizing wasted context.",
   "location": "San Diego, California, United States",
   "email": "jeff@jeffkoretke.com",
   "resume": "/files/jeff-koretke-resume.pdf",
@@ -13,9 +13,9 @@
       "duration": "2018 - Present",
       "description": "Android application development using Kotlin and Jetpack Compose. Implemented MVI architecture and modern Android development practices.",
       "achievements": [
-        "Increased app performance by 40% through optimization",
-        "Led migration from Java to Kotlin",
-        "Implemented automated testing reducing bugs by 60%"
+        "Introduced agentic AI coding workflows to the team, improving development speed and code quality",
+        "Built multi-model pipelines using Claude Code and Gemini CLI, routing tasks to each model based on its strengths",
+        "Designed self-updating automation that optimizes token efficiency across AI model handoffs"
       ]
     },
     {

@@ -5,8 +5,8 @@ const skillSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     enum: {
-      values: ['languages', 'mobile', 'backend', 'tools', 'methodologies', 'frameworks', 'platforms', 'databases'],
-      message: 'Category must be one of: languages, mobile, backend, tools, methodologies, frameworks, platforms, databases'
+      values: ['ai', 'languages', 'mobile', 'backend', 'tools', 'methodologies', 'frameworks', 'platforms', 'databases'],
+      message: 'Category must be one of: ai, languages, mobile, backend, tools, methodologies, frameworks, platforms, databases'
     }
   },
   name: {
