@@ -145,6 +145,7 @@ const docsRoutes = require('./src/routes/docsRoutes');
 const utilityRoutes = require('./src/routes/utilityRoutes');
 const aboutRoutes = require('./src/routes/aboutRoutes');
 const skillsRoutes = require('./src/routes/skillsRoutes');
+const blogRoutes = require('./src/routes/blogRoutes');
 
 // Use routes
 app.use('/api/contact', contactRoutes);
@@ -152,6 +153,7 @@ app.use('/api/docs', docsRoutes);
 app.use('/api/isitnotfriday', utilityRoutes);
 app.use('/api/about', aboutRoutes);
 app.use('/api/skills', skillsRoutes);
+app.use('/api/blog', blogRoutes);
 
 // Health check endpoint (like a simple ping in Android)
 app.get('/api/health', (req, res) => {
