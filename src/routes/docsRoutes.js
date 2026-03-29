@@ -288,8 +288,7 @@ router.get('/', readOnlyLimiter, (req, res) => {
                                 name: "Jeff Koretke",
                                 title: "Android Developer",
                                 bio: "Experienced Android developer with expertise in Kotlin, MVVM architecture, and modern Android development practices.",
-                                location: "United States",
-                                email: "jeff@jeffkoretke.com",
+                                location: "Portland, Oregon, United States",                                email: "jeff@jeffkoretke.com",
                                 skills: {
                                     languages: ["Kotlin", "Java", "JavaScript", "Python", "TypeScript"],
                                     mobile: ["Android SDK", "Jetpack Compose", "MVVM Architecture", "Room Database"],
